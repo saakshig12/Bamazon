@@ -32,7 +32,7 @@ connection.connect(function (err) {
 });
 
 function startSearch() {
-<<<<<<< HEAD
+
     var table = new Table({
         head: ['Product ID', 'Product', 'Department', 'Price', 'Quantity']
     });
@@ -44,45 +44,7 @@ function startSearch() {
         console.log(table.toString());
         purchase(res);
     });
-=======
-    inquirer
-        .prompt({
-            name: "choose",
-            type: "list",
-            message: "What would you like to do today? ",
-            choices: [
-                "Buy a product?",
-                "Look at the inventory",
-                "exit"
-            ]
-        })
-        .then(function (answer) {
-            switch (answer.action) {
-                case "Buy a product?":
-                    Buying();
-                    break;
-                case "Look at the inventory":
-                    Inventory();
-                    break;
-                case "exit":
-                    connection.end();
-                    console.log("Please come again!");
-                    break;
-            }
-        });
 
-    function Buying() {
-        connection.query("SELECT * FROM products", function (err, res) {
-            if (err) throw err;
-            for (var i = 0; i < res.length; i++) {
-                console.log(res[i].products);
-            }
-        });
-        purchase();
-
-    }
->>>>>>> 011e8bc4358a14a858ed5e4e660aef73f6b801c4
-}
 
 // function purchase(res) {
 //     inquirer.prompt([
