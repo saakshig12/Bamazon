@@ -46,17 +46,42 @@ function startSearch() {
     });
 
 
-// function purchase(res) {
-//     inquirer.prompt([
-//             {
-//                 name: "ID",
-//                 type: "input",
-//                 message: "Enter the ID of the product that you would like to purchase today!",
-//             },
-//             {
-//                 name: "quantity",
-//                 type: "input",
-//                 message: "Enter the quantity of the product that you would like to get.",
-//             }
-//         ])
-        
+    function purchase(res) {
+        inquirer.prompt([
+            {
+                name: "ID",
+                type: "input",
+                message: "Enter the ID of the product that you would like to purchase today!",
+            },
+            {
+                name: "quantity",
+                type: "input",
+                message: "Enter the quantity of the product that you would like to get.",
+            }
+        ])
+            .then(function (answer) {
+                if (answer.ID > res.length) {
+                    console.log("You entered an invalid product ID. Please make another selection".red);
+                    startSearch();
+                } else {
+                    connection.query("SELECT * FROM products WHERE id = " + answer.ID, function (err, res) {
+                        if (err) throw err;
+                        var Qpurchase = parseInt(answer.quantity);
+                        var ID = answer.ID;
+                        var Qstart = res[0].quantity;
+                        var Qprice = res[0].price;
+                        if (res.length >= 0 && Qstart >= Qpurchase) {
+                            var Qend = Qstart - Qpurchase;
+                            updateQuantity(ID, Qend);
+                            console.log("Your total is: " + "$"+ total(Qprice, Qpurchase));
+                        } else {
+                            console.log("There is not enough in stock to fulfill the quantity requested. Please try again.");
+                            purchase();
+                        }
+                        connection.end();
+                    });
+                }
+            });
+    }
+    
+    
