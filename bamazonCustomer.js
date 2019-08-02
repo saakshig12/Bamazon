@@ -24,26 +24,82 @@ var connection = mysql.createConnection({
     user: "root",
     password: "teehee12",
     database: "bamazon_db"
-  });
+});
 
-  connection.connect(function(err) {
+connection.connect(function (err) {
     if (err) throw err;
     startSearch();
-  });
+});
 
-  function startSearch() {
+function startSearch() {
     inquirer
-    .prompt({
-      name: "choose",
-      type: "list",
-      message: "What would you like to do today? ",
-      choices: [
-        "Buy a product?",
-        "Look at the inventory",
-        "exit"
-      ]
-    })
-    .then(function(answer) {
-        
+        .prompt({
+            name: "choose",
+            type: "list",
+            message: "What would you like to do today? ",
+            choices: [
+                "Buy a product?",
+                "Look at the inventory",
+                "exit"
+            ]
+        })
+        .then(function (answer) {
+            switch (answer.action) {
+                case "Buy a product?":
+                    Buying();
+                    break;
+                case "Look at the inventory":
+                    Inventory();
+                    break;
+                case "exit":
+                    connection.end();
+                    console.log("Please come again!");
+                    break;
+            }
+        });
+
+    function Buying() {
+        connection.query("SELECT * FROM products", function (err, data) {
+            if (err) throw err;
+            for (var i = 0; i < res.length; i++) {
+                console.log(res[i].products);
+            }
+        });
+        purchase();
+
     }
-  }
+}
+
+function purchase() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'select',
+            message: "Enter the ID of the item you would like to purchase.",
+            validate: function (name) {
+                return /^[0-9]*$/.test(name)
+            }
+        },
+        {
+            type: 'input',
+            name: 'quantity',
+            message: 'Quantity?',
+            validate: function (name) {
+                return /^[0-9]*$/.test(name)
+            }
+        }
+            .then(function (response) {
+                var query = "SELECT * FROM inventory WHERE id='${response.select}";
+                connection.query(query, function (err, data) {
+                    if (err) throw err;
+                    for (var i = 0; i < res.length; i++) {
+                        console.log(res[i].products);
+                    }
+                });
+            })
+    
+
+
+
+
+        ])}
