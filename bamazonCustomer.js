@@ -70,36 +70,4 @@ function startSearch() {
     }
 }
 
-function purchase() {
-    inquirer.prompt([
-        {
-            type: 'input',
-            name: 'select',
-            message: "Enter the ID of the item you would like to purchase.",
-            validate: function (name) {
-                return /^[0-9]*$/.test(name)
-            }
-        },
-        {
-            type: 'input',
-            name: 'quantity',
-            message: 'Quantity?',
-            validate: function (name) {
-                return /^[0-9]*$/.test(name)
-            }
-        }
-            .then(function (response) {
-                var query = "SELECT * FROM inventory WHERE id='${response.select}";
-                connection.query(query, function (err, data) {
-                    if (err) throw err;
-                    for (var i = 0; i < res.length; i++) {
-                        console.log(res[i].products);
-                    }
-                });
-            })
-    
 
-
-
-
-        ])}
