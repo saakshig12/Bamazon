@@ -32,42 +32,30 @@ connection.connect(function (err) {
 });
 
 function startSearch() {
-    inquirer
-        .prompt({
-            name: "choose",
-            type: "list",
-            message: "What would you like to do today? ",
-            choices: [
-                "Buy a product?",
-                "Look at the inventory",
-                "exit"
-            ]
-        })
-        .then(function (answer) {
-            switch (answer.action) {
-                case "Buy a product?":
-                    Buying();
-                    break;
-                case "Look at the inventory":
-                    Inventory();
-                    break;
-                case "exit":
-                    connection.end();
-                    console.log("Please come again!");
-                    break;
-            }
-        });
-
-    function Buying() {
-        connection.query("SELECT * FROM products", function (err, data) {
-            if (err) throw err;
-            for (var i = 0; i < res.length; i++) {
-                console.log(res[i].products);
-            }
-        });
-        purchase();
-
-    }
+    var table = new Table({
+        head: ['Product ID', 'Product', 'Department', 'Price', 'Quantity']
+    });
+    connection.query("SELECT * FROM products", function (err, res) {
+        if (err) throw err;
+        for (i = 0; i < res.length; i++) {
+            table.push([res[i].id, res[i].name, res[i].dept_name, res[i].price, res[i].quantity]);
+        }
+        console.log(table.toString());
+        purchase(res);
+    });
 }
 
-
+// function purchase(res) {
+//     inquirer.prompt([
+//             {
+//                 name: "ID",
+//                 type: "input",
+//                 message: "Enter the ID of the product that you would like to purchase today!",
+//             },
+//             {
+//                 name: "quantity",
+//                 type: "input",
+//                 message: "Enter the quantity of the product that you would like to get.",
+//             }
+//         ])
+        
