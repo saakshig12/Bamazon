@@ -59,7 +59,7 @@ function startSearch() {
         });
 
     function Buying() {
-        connection.query("SELECT * FROM products", function (err, data) {
+        connection.query("SELECT * FROM products", function (err, res) {
             if (err) throw err;
             for (var i = 0; i < res.length; i++) {
                 console.log(res[i].products);
