@@ -84,4 +84,4 @@ function startSearch() {
             });
     }
     
-    
+  // add total cost calculation + update in quantity in the database  
