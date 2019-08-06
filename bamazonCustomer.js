@@ -1,22 +1,10 @@
-
-// 5. Then create a Node application called `bamazonCustomer.js`. Running this application will first display all of the items 
-// available for sale. Include the ids, names, and prices of products for sale.
-
-// 6. The app should then prompt users with two messages.
-
-//    * The first should ask them the ID of the product they would like to buy.
-//    * The second message should ask how many units of the product they would like to buy.
-
-// 7. Once the customer has placed the order, your application should check if your store has enough of the product to meet the customer's request.
-
-//    * If not, the app should log a phrase like `Insufficient quantity!`, and then prevent the order from going through.
-
-// 8. However, if your store _does_ have enough of the product, you should fulfill the customer's order.
-//    * This means updating the SQL database to reflect the remaining quantity.
-//    * Once the update goes through, show the customer the total cost of their purchase.
-
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var table = require("cli-table-redemption");
+
+var table = new Table({
+    head: ["ID", "Product", "Department", "Price", "Quantity"]
+});
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -33,10 +21,8 @@ connection.connect(function (err) {
 
 function startSearch() {
 
-    var table = new Table({
-        head: ['Product ID', 'Product', 'Department', 'Price', 'Quantity']
-    });
-    connection.query("SELECT * FROM products", function (err, res) {
+    
+    connection.query("SELECT * FROM ", function (err, res) {
         if (err) throw err;
         for (i = 0; i < res.length; i++) {
             table.push([res[i].id, res[i].name, res[i].dept_name, res[i].price, res[i].quantity]);
@@ -73,7 +59,7 @@ function startSearch() {
                         if (res.length >= 0 && Qstart >= Qpurchase) {
                             var Qend = Qstart - Qpurchase;
                             updateQuantity(ID, Qend);
-                            console.log("Your total is: " + "$"+ total(Qprice, Qpurchase));
+                            console.log("Your total is: " + "$" + total(Qprice, Qpurchase));
                         } else {
                             console.log("There is not enough in stock to fulfill the quantity requested. Please try again.");
                             purchase();
@@ -83,5 +69,17 @@ function startSearch() {
                 }
             });
     }
-    
-  // add total cost calculation + update in quantity in the database  
+}
+
+// add total cost calculation + update in quantity in the database  
+
+function total(Qprice, Qpurchase) {
+    var total = Qprice * Qpurchase
+    return total.toFixed(2);
+}
+function updateQuantity(ID, Qend) {
+    connection.query("UPDATE products SET quantity = ? WHERE id = ?", [Qend, ID], function (err, res) {
+        if (err) throw err;
+        console.log("Updated quantity: " + Qend);
+    });
+};
